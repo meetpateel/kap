@@ -270,7 +270,36 @@
 
   <canvas id="fx"></canvas>
 
-  <div class="wrap">
+  <!-- Welcome Gate -->
+  <div id="gate" style="
+    position:fixed; inset:0; z-index:200;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    background: linear-gradient(160deg, #fef6ee, #fde8d8);
+    gap: 20px;
+  ">
+    <div style="text-align:center;">
+      <div style="font-family:'Playfair Display',serif; font-size:clamp(32px,7vw,62px); color:#2c1a0e; letter-spacing:-0.02em; line-height:1.1;">
+        Welcome,<br><em style="color:#e8613a;">Khushi</em> ✨
+      </div>
+      <p style="font-family:'DM Sans',sans-serif; color:#7a5540; font-size:16px; margin:12px 0 28px; line-height:1.6;">
+        Something small is waiting for you inside 🙂
+      </p>
+      <button id="enterBtn" style="
+        border:0; border-radius:16px;
+        padding:16px 40px;
+        font-family:'DM Sans',sans-serif;
+        font-weight:800; font-size:17px;
+        cursor:pointer; color:white;
+        background: linear-gradient(135deg, #e8613a, #f08060);
+        box-shadow: 0 14px 40px rgba(232,97,58,.30);
+        transition: transform .1s ease, filter .15s ease;
+        letter-spacing:.01em;
+      ">Enter →</button>
+    </div>
+  </div>
+
+  <div class="wrap" style="opacity:0; pointer-events:none; transition: opacity .6s ease;" id="mainWrap">
     <div class="card" id="mainCard">
       <div class="badge"><span class="pulse"></span> Your call</div>
 
@@ -306,8 +335,7 @@
         <div class="mini">
           <b>Pick the timing</b>
           <div class="pillRow" id="times">
-            <div class="pill active" data-t="After your exam ✅">After your exam ✅</div>
-            <div class="pill" data-t="March check-in 📅">March 📅</div>
+            <div class="pill active" data-t="March check-in 📅">March 📅</div>
             <div class="pill" data-t="May meetup ✈️">May ✈️</div>
           </div>
         </div>
@@ -327,9 +355,17 @@
           <b>Bonus perk</b><br/>
           Either choice earns: <span style="color:var(--ok); font-weight:800;">stress-free good vibes</span> ✨
         </div>
+
+        <div class="mini" id="jokeMini">
+          <b>🃏 Idiot joke of the day</b>
+          <div id="jokeText" style="margin-top:10px; color:var(--muted); font-size:13px; line-height:1.55;">Loading...</div>
+          <div style="margin-top:8px;">
+            <span id="jokeNext" style="font-size:12px; color:var(--hot); font-weight:700; cursor:pointer; text-decoration:underline dotted;">another one →</span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </div><!-- /mainWrap -->
 
   <canvas id="confetti"></canvas>
 
@@ -347,6 +383,18 @@
   </div>
 
   <script>
+    // ---------- Welcome Gate ----------
+    document.getElementById("enterBtn").addEventListener("click", () => {
+      const gate = document.getElementById("gate");
+      const main = document.getElementById("mainWrap");
+      gate.style.transition = "opacity .5s ease";
+      gate.style.opacity = "0";
+      setTimeout(() => { gate.style.display = "none"; }, 500);
+      main.style.opacity = "1";
+      main.style.pointerEvents = "auto";
+      spawnBurst(10);
+    });
+
     // ---------- Typewriter ----------
     const lines = [
       "Quick question… 🙂",
@@ -685,6 +733,56 @@ Note:   Your comfort > everything. 🙂`;
       }
       requestAnimationFrame(step);
     }
+
+    // ---------- Idiot Jokes ----------
+    const jokes = [
+      "Why did the scarecrow win an award? Because he was outstanding in his field. He also forgot where he parked.",
+      "I told my dog to sit. He looked at me. I looked at him. Neither of us knew what we were doing.",
+      "Why do cows wear bells? Because their horns don't work. They also lost the warranty.",
+      "I asked a fish if it wanted to hear a joke. It said no. I told it anyway. It swam away. Fair.",
+      "I tried to write a joke about stairs but it was just one step too far. And then I fell.",
+      "Why did the tomato turn red? Because it saw the salad dressing. And also it forgot to knock.",
+      "My brain has too many tabs open and three of them are just making weird noises.",
+      "I put my phone on airplane mode but it still didn't fly. Zero stars.",
+      "Why did the bicycle fall over? Because it was two-tired. Also it had no one to call.",
+      "I told a joke to my ceiling. It didn't laugh. We're not on speaking terms now.",
+      "I tried to catch some fog earlier. I mist. Then I tripped. Then I mist again.",
+      "Why don't eggs tell jokes? They'd crack each other up and then there'd be a mess.",
+      "I named my dog 'Stay'. Now I can't call him. Well, technically I can, but it backfires.",
+      "I'm reading a book about anti-gravity. It's impossible to put down. Also I glued my hands.",
+      "Why did the math book look so sad? It had too many problems. Relatable honestly.",
+      "I tried to come up with a carpentry joke but none of them were working. Neither was my drill.",
+      "A skeleton walked into a bar and ordered a beer and a mop. Nobody asked.",
+      "Why can't you give Elsa a balloon? She'll let it go. She'll also deny it immediately.",
+      "I used to hate facial hair but then it grew on me. So did the confusion.",
+      "What do you call a fish without eyes? A fsh. Also very lost.",
+      "I bought some shoes from a drug dealer. I don't know what he laced them with but I was tripping.",
+      "Why did the golfer bring an extra pair of pants? In case he got a hole in one. Very prepared.",
+      "I'm on a seafood diet. I see food and then I stand there confused about what I want.",
+      "What do you call cheese that isn't yours? Nacho cheese. Also a crime technically.",
+      "I asked the librarian if they had books about paranoia. She whispered: they're right behind you.",
+      "My vacuum broke and it was just collecting dust after that. So were my aspirations.",
+      "Why did the can crusher quit? Because the job was soda-pressing. He needed a break.",
+      "I have a joke about construction but I'm still working on it. It has been six months.",
+      "I told my friend 10 jokes to make him laugh. Sadly no pun in ten did.",
+      "What do you call a sleeping dinosaur? A dino-snore. Also don't wake it up.",
+    ];
+
+    function getDailyJoke(){
+      // Use day of year so it changes daily but stays same all day
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 0);
+      const day = Math.floor((now - start) / 86400000);
+      return jokes[day % jokes.length];
+    }
+
+    let jokeIndex = jokes.indexOf(getDailyJoke());
+    document.getElementById("jokeText").textContent = getDailyJoke();
+
+    document.getElementById("jokeNext").addEventListener("click", ()=>{
+      jokeIndex = (jokeIndex + 1) % jokes.length;
+      document.getElementById("jokeText").textContent = jokes[jokeIndex];
+    });
 
     // Polyfill for roundRect if needed
     if(!CanvasRenderingContext2D.prototype.roundRect){
